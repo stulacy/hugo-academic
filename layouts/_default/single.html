@@ -1,44 +1,48 @@
-{{- define "main" -}}
+{{ partial "header.html" . }}
+{{ partial "navbar.html" . }}
 
 <article class="article" itemscope itemtype="http://schema.org/Article">
 
-  {{ partial "page_header" . }}
+  {{ partial "header_image.html" . }}
 
   <div class="article-container">
+    <div class="article-inner">
+      <h1 itemprop="name">{{ .Title }}</h1>
 
-    <div class="article-style" itemprop="articleBody">
-      {{ .Content }}
-    </div>
+      {{ partial "article_metadata" (dict "content" . "is_list" 0) }}
 
-    {{ partial "page_edit" . }}
-
-    {{ partial "tags" . }}
-
-    {{ if ne .Type "page" }}
-      {{ partial "page_author" . }}
-      {{ $related := site.RegularPages.Related . | first 5 }}
-      {{ with $related }}
-      <div class="article-widget">
-        <div class="hr-light"></div>
-        <h3>{{ i18n "related" }}</h3>
-        <ul>
-          {{ range . }}
-          <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
-          {{ end }}
-        </ul>
+      <div class="article-style" itemprop="articleBody">
+        {{ .Content }}
       </div>
-      {{ end }}
-    {{ end }}
 
-    {{ if site.Params.section_pager }}
-    <div class="article-widget">
-      {{ partial "section_pager" . }}
+      {{ partial "tags.html" . }}
     </div>
-    {{ end }}
-
-    {{ partial "comments" . }}
-
   </div>
+
 </article>
 
-{{- end -}}
+{{ $related := .Site.RegularPages.Related . | first 5 }}
+{{ with $related }}
+<div class="article-container article-widget">
+  <div class="hr-light"></div>
+  <h3>{{ i18n "related" }}</h3>
+  <ul>
+    {{ range . }}
+    <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+    {{ end }}
+  </ul>
+</div>
+{{ end }}
+
+{{ if .Site.Params.section_pager }}
+<div class="container article-widget">
+  {{ partial "section_pager.html" . }}
+</div>
+{{ end }}
+
+<div class="article-container">
+  {{ partial "comments.html" . }}
+</div>
+
+{{ partial "footer_container.html" . }}
+{{ partial "footer.html" . }}
